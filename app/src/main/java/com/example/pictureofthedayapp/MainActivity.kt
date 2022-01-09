@@ -2,7 +2,7 @@ package com.example.pictureofthedayapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.pictureofthedayapp.ui.main.MainFragment
+import com.example.pictureofthedayapp.ui.main.fragments.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
