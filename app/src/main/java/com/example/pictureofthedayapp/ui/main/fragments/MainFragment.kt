@@ -4,90 +4,85 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import coil.annotation.ExperimentalCoilApi
 import coil.load
-import com.example.pictureofthedayapp.R
+import com.example.pictureofthedayapp.databinding.MainFragmentBinding
 import com.example.pictureofthedayapp.ui.main.viewmodels.LoadState
 import com.example.pictureofthedayapp.ui.main.viewmodels.MainViewModel
 import com.example.pictureofthedayapp.utils.showTextToast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.progressindicator.CircularProgressIndicator
 
-class MainFragment : Fragment() {
+class MainFragment : TaggedFragment() {
 
     companion object {
         fun newInstance() = MainFragment()
+        const val FRAGMENT_TAG = "MainFragmentTag"
     }
+
+    override fun getFragmentTag() = FRAGMENT_TAG
+    override fun newInstance() = MainFragment()
 
     private lateinit var viewModel: MainViewModel
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
-    private lateinit var progress: CircularProgressIndicator
-    private lateinit var ivPicture: AppCompatImageView
-    private lateinit var bottomSheet: ConstraintLayout
-    private lateinit var bottomSheetTvDescriptionHeader: AppCompatTextView
-    private lateinit var bottomSheetTvDescription: AppCompatTextView
-    private lateinit var btnReload: AppCompatButton
+    private var _binding: MainFragmentBinding? = null
+    private val binding: MainFragmentBinding get() = _binding!!
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    @OptIn(ExperimentalCoilApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        return inflater.inflate(R.layout.main_fragment, container, false)
+        _binding = MainFragmentBinding.inflate(inflater, container, false).apply {
+            viewModel = ViewModelProvider(this@MainFragment)[MainViewModel::class.java]
+            initViews()
+            initObservers()
+            viewModel.getData()
+        }
+        return binding.root
     }
 
     @OptIn(ExperimentalCoilApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews(view)
-        initObservers()
-        viewModel.getData()
     }
 
-    private fun initViews(view: View) {
-        progress = view.findViewById(R.id.progress_circular)
-        ivPicture = view.findViewById(R.id.iv_picture)
-        bottomSheet = view.findViewById(R.id.bottom_sheet_container)
-        bottomSheetTvDescriptionHeader =
-            bottomSheet.findViewById(R.id.bottom_sheet_description_header)
-        bottomSheetTvDescription = bottomSheet.findViewById(R.id.bottom_sheet_description)
-        btnReload = view.findViewById(R.id.btn_reload)
-
+    private fun MainFragmentBinding.initViews() {
         btnReload.setOnClickListener {
             viewModel.getData()
         }
 
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetDialog.root)
         bottomSheetBehavior.skipCollapsed = true
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
     }
 
     @ExperimentalCoilApi
-    private fun initObservers() {
+    private fun MainFragmentBinding.initObservers() {
         viewModel.liveData.observe(viewLifecycleOwner) {
             when (it) {
                 is LoadState.Error -> {
-                    progress.isVisible = false
+                    progressCircular.isVisible = false
                     btnReload.isVisible = true
                     ivPicture.isVisible = false
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     it.error.message?.let { errorMessage -> showTextToast(errorMessage) }
                 }
                 is LoadState.Loading -> {
-                    progress.isVisible = true
+                    progressCircular.isVisible = true
                     btnReload.isVisible = false
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
                 is LoadState.Success -> {
-                    progress.isVisible = false
+                    progressCircular.isVisible = false
                     btnReload.isVisible = false
                     with(it.data) {
                         ivPicture.load(this.url) {
@@ -102,8 +97,8 @@ class MainFragment : Fragment() {
                         }
 
                         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                        bottomSheetTvDescriptionHeader.text = this.title
-                        bottomSheetTvDescription.text = this.explanation
+                        bottomSheetDialog.bottomSheetDescriptionHeader.text = this.title
+                        bottomSheetDialog.bottomSheetDescription.text = this.explanation
                     }
                 }
             }
