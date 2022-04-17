@@ -26,7 +26,6 @@ class MainFragment : TaggedFragment() {
     }
 
     override fun getFragmentTag() = FRAGMENT_TAG
-    override fun newInstance() = MainFragment()
 
     private lateinit var viewModel: MainViewModel
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>

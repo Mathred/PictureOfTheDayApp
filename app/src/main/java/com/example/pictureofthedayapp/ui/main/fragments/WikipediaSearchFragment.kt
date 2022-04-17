@@ -14,7 +14,6 @@ import com.example.pictureofthedayapp.databinding.WikipediaSearchFragmentBinding
 class WikipediaSearchFragment : TaggedFragment() {
 
     override fun getFragmentTag() = FRAGMENT_TAG
-    override fun newInstance() = WikipediaSearchFragment()
 
     companion object {
         fun newInstance() = WikipediaSearchFragment()

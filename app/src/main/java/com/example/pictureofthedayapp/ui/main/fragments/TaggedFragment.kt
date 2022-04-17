@@ -4,5 +4,4 @@ import androidx.fragment.app.Fragment
 
 abstract class TaggedFragment: Fragment() {
     abstract fun getFragmentTag(): String
-    abstract fun newInstance(): Fragment
 }
