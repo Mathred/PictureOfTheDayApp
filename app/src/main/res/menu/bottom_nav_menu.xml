@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/picture_of_the_day"
+            android:checked="true"
+            android:icon="@drawable/star_selector"
+            android:title="@string/nav_picture_of_day" />
+        <item
+            android:id="@+id/wikipedia"
+            android:icon="@drawable/ic_wikipedia"
+            android:title="@string/nav_wiki" />
+    </group>
+</menu>
