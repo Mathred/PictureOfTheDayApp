@@ -20,6 +20,9 @@ class MainFragment : TaggedFragment() {
     companion object {
         fun newInstance() = MainFragment()
         const val FRAGMENT_TAG = "MainFragmentTag"
+        enum class PhotoDate {
+            TODAY, YESTERDAY, BEFORE_YESTERDAY
+        }
     }
 
     override fun getFragmentTag() = FRAGMENT_TAG
@@ -46,6 +49,7 @@ class MainFragment : TaggedFragment() {
             initViews()
             initObservers()
             viewModel.getData()
+            viewModel.setPhotoDate(PhotoDate.TODAY)
         }
         return binding.root
     }
@@ -63,6 +67,16 @@ class MainFragment : TaggedFragment() {
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetDialog.root)
         bottomSheetBehavior.skipCollapsed = true
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+
+        chipToday.setOnClickListener {
+            viewModel.setPhotoDate(PhotoDate.TODAY)
+        }
+        chipYesterday.setOnClickListener {
+            viewModel.setPhotoDate(PhotoDate.YESTERDAY)
+        }
+        chipBeforeYesterday.setOnClickListener {
+            viewModel.setPhotoDate(PhotoDate.BEFORE_YESTERDAY)
+        }
     }
 
     @ExperimentalCoilApi
