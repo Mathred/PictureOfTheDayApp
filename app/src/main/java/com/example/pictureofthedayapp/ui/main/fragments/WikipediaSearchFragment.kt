@@ -16,7 +16,6 @@ class WikipediaSearchFragment : TaggedFragment() {
     override fun getFragmentTag() = FRAGMENT_TAG
 
     companion object {
-        fun newInstance() = WikipediaSearchFragment()
         private const val BASE_WIKI_URL = "https://ru.wikipedia.org/w/index.php?search="
         const val FRAGMENT_TAG = "WikipediaSearchFragmentTag"
     }
